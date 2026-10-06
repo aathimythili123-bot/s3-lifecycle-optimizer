@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thermolayer — S3 Lifecycle Cost Optimizer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark"></span>
+    <div>
+      <h1>Thermolayer</h1>
+      <p>S3 storage-class lifecycle cost optimizer</p>
+    </div>
+  </div>
+  <div class="controls">
+    <input id="bucketName" type="text" value="demo-analytics-bucket" spellcheck="false" />
+    <button id="btnSimulate" class="btn btn-ghost">New demo data</button>
+    <button id="btnAnalyze" class="btn btn-primary">Analyze bucket</button>
+  </div>
+</header>
+
+<main id="app">
+  <section class="hero" id="hero">
+    <div class="hero-temp">
+      <div class="temp-scale">
+        <span class="temp-label hot">Hot</span>
+        <div class="temp-bar" id="tempBar"></div>
+        <span class="temp-label cold">Cold</span>
+      </div>
+    </div>
+    <div class="hero-copy">
+      <p class="eyebrow-free">Point this at a bucket, and it tells you what's still sitting in expensive Standard storage months after anyone last touched it.</p>
+      <div class="stat-row" id="statRow">
+        <div class="stat">
+          <span class="stat-value" id="statObjects">—</span>
+          <span class="stat-key">objects scanned</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value" id="statSize">—</span>
+          <span class="stat-key">total size</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value accent-hot" id="statCurrent">—</span>
+          <span class="stat-key">current monthly cost</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value accent-cold" id="statOptimized">—</span>
+          <span class="stat-key">optimized monthly cost</span>
+        </div>
+        <div class="stat stat-savings">
+          <span class="stat-value" id="statSavings">—</span>
+          <span class="stat-key">saved per year</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel breakdown">
+    <div class="panel-head">
+      <h2>Recommended distribution</h2>
+      <p>Where objects land once moved to their cheapest eligible class</p>
+    </div>
+    <div id="breakdownChart" class="breakdown-chart"></div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h2>Objects</h2>
+      <p>Every object, its access pattern, and the move that saves money</p>
+      <div class="filter-row">
+        <button class="chip active" data-filter="all">All</button>
+        <button class="chip" data-filter="changed">Recommended to move</button>
+        <button class="chip" data-filter="unchanged">Already optimal</button>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table id="objectsTable">
+        <thead>
+          <tr>
+            <th>Key</th>
+            <th>Size</th>
+            <th>Age</th>
+            <th>Accesses (30d)</th>
+            <th>Current</th>
+            <th></th>
+            <th>Recommended</th>
+            <th>Monthly savings</th>
+          </tr>
+        </thead>
+        <tbody id="objectsBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel policy-panel">
+    <div class="panel-head">
+      <h2>Lifecycle policy</h2>
+      <p>Generated AWS S3 Lifecycle Configuration JSON — apply it directly with the AWS CLI</p>
+    </div>
+    <pre id="policyOutput">Run an analysis, then click "Generate policy JSON."</pre>
+    <button id="btnPolicy" class="btn btn-ghost">Generate policy JSON</button>
+  </section>
+</main>
+
+<footer class="foot">
+  <span id="healthStatus">checking backend…</span>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+services:
+  backend:
+    build: ./backend
+    container_name: s3-optimizer-backend
+    ports:
+      - "8000:8000"
+    environment:
+      # Optional: set these to point the optimizer at a real AWS account.
+      # Leave blank to run entirely on synthetic demo data.
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-}
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:-us-east-1}
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    container_name: s3-optimizer-frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
